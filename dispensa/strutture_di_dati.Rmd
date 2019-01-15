@@ -1,0 +1,288 @@
+---
+title: "Strutture di dati"
+author: "Stefano Bussolon"
+date: "1 gennaio 2019"
+output: html_document
+
+noknit: (function(inputFile, encoding) { 
+      out_dir <- '../../dest/dispensa/html';
+      rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file=file.path(dirname(inputFile), out_dir,
+                        'strutture_di_dati.html')) })
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Le strutture di dati
+
+R opera su strutture di dati. Le tipologie di strutture di dati principali in R sono i *vettori*, le *matrici* e gli *array*, le *liste* e i *data frame*.
+
+## Vettori
+
+Un vettore è una collezione ordinata di *celle* dello stesso tipo. Ogni vettore ha un tipo, una lunghezza e può avere degli *attributi*, o *metadati*.
+I tipi di vettori sono *logical*, *integer*, *double*, *complex*, *character* e *raw*.
+
+Riprendiamo gli esempi del capitolo precedente.
+
+```{r sd_variabili}
+booleano <- TRUE
+intero1 <- 5L # L forza l'intero
+etichetta <- "Antonio"
+numerico1 <- 5.12
+numerico2 <- 10/3
+
+mode(booleano)
+mode(intero1)
+mode(etichetta)
+mode(numerico1)
+mode(numerico2)
+
+
+```
+
+Apparentemente, le variabili appena create sono degli scalari. In realtà sono vettori di lunghezza 1.
+
+```{r sd_length}
+length(intero1)
+```
+
+## La funzione `c()`
+
+Il modo più semplice per creare un vettore di lunghezza superiore a 1 è attraverso la funzione `c()`. Questa funzione permette di *combinare* o *concatenare* una lista di argomenti in un vettore.
+
+```{r sd_c}
+vettore1 <- c(1,5,88,56314, 12,0,22)
+(vettore2 <- c(1:5, sesto=10, settimo=17))
+c(TRUE,5)
+c(5, 10.5, TRUE, "next")
+
+```
+
+## *Coercizione* implicita
+
+Poiché nell'ultimo comando abbiamo mescolato numeri interi, numeri decimali e stringhe, R ha trasformato il vettore in un vettore di stringhe.
+
+In maniera simile, il vettore `c(TRUE,5)` ha combinato una variabile logica ed una numerica, e dunque r ha implicitamente trasformato la variabile logica (`TRUE`) in numerica (`1`).
+
+* [Coercion - R Programming for Data Science](https://bookdown.org/rdpeng/rprogdatascience/r-nuts-and-bolts.html#explicit-coercion)
+
+
+### Proprietà
+
+I vettori hanno 3 proprietà di base: il *tipo*, la *lunghezza*, gli *attributi*.
+
+Il tipo può essere analizzato con la funzione `typeof()`, la lunghezza con `length()`, gli attributi con `attributes()`.
+
+```{r}
+typeof(vettore1) # il tipo
+length(vettore1) # la lunghezza
+attributes(vettore1) # gli attributi
+```
+
+Gli attributi sono un insieme di coppie `chiave-valore`
+
+È possibile associare un attributo ad un oggetto attraverso la sintassi `attr(oggetto,chiave) <- valore`; il valore di un attributo può essere richiamato con la funzione `attr(oggetto,chiave)`
+
+```{r}
+attr(vettore1, "capelli") <- "biondi"
+attr(vettore1, "occhi") <- "verdi"
+attributes(vettore1)
+attr(vettore1, "occhi")
+```
+
+* [R Language Definition - Attributes](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Attributes)
+* [Data structures - Attributes](http://adv-r.had.co.nz/Data-structures.html#attributes)
+
+Vi sono 3 attributi dei vettori che hanno uno statuto speciale: `names`, `dim`, e `class`
+
+```{r sd_class}
+names(vettore2)
+# si può usare anche la sintassi seguente
+# ma è sconsigliata
+attr(vettore2,"names") 
+class(vettore2)
+```
+
+### Names
+
+*names* è un attributo che, se presente, attribuisce una etichetta agli elementi di un vettore o una lista. Si noti che `names(vettore2)` è equivalente a `attr(vettore2,"names")`, ma la prima forma è preferibile alla seconda.
+
+* [R Language Definition - Names](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Names)
+
+
+### Class
+
+`class()` è l'attributo che permette ad r di implementare una logica orientata agli oggetti.
+Ad esempio, permette il polimorfismo delle funzioni
+
+* [oop - What is polymorphism, what is it for, and how is it used? - Stack Overflow](https://stackoverflow.com/questions/1031273/what-is-polymorphism-what-is-it-for-and-how-is-it-used)
+* [Polymorphism (computer science) - Wikipedia](https://en.wikipedia.org/wiki/Polymorphism_(computer_science))
+
+### Str
+
+La funzione `str(variabile)` permette di visualizzare la struttura sottostante alla variabile.
+
+```{r sd_str}
+str(vettore1)
+```
+
+## NA - valori mancanti
+
+Spesso i dati su cui lavoriamo sono incompleti: il valore di alcune *celle* (alcune variabili di alcune osservazioni) sono mancanti. Per rappresentare i valori mancanti, r utilizza la costante NA (*not available*). Tecnicamente, NA è un vettore logico di lunghezza 1.
+
+
+```{r sd_na}
+incompleto <- c(1, 2, NA, 10, 3)
+# is.na mi dice se l'elemento è NA
+is.na(incompleto)
+```
+
+NA tende a *contagiare* valori non NA in caso di operazioni logiche ed aritmetiche:
+
+```{r sd_logica_NA}
+1 + NA
+NA == 5
+```
+
+Per comprendere la logica, possiamo tradurre NA come *non so*. Quanto fa *non so* + 1? *non so*.
+*non so* è uguale a 5? *non so*.
+
+```{r}
+TRUE | NA
+TRUE & NA
+FALSE | NA
+FALSE & NA
+```
+
+Anche questi risultati apparentemente contraddittori sono in realtà coerenti.
+vero o qualcosa è sempre vero, non importa cosa sia quel qualcosa. Falso e qualcosa è sempre falso. Vero e *non so* è *non so*, falso o *non so* è *non so*.
+
+* [R Programming for Data Science](https://bookdown.org/rdpeng/rprogdatascience/r-nuts-and-bolts.html#missing-values)
+
+## Matrici
+
+Una matrice è una collezione bidimensionale, rettangolare di `celle` dello stesso tipo.
+Un array è una collezione che può avere più di 2 dimensioni o, detto in altro termini, una matrice è un array di due dimensioni.
+
+In realtà una matrice è un vettore con attributo dim e con lunghezza righe*colonne.
+
+### Creare e manipolare matrici
+
+```{r sd_matrici}
+(matrice1 <- matrix(c(11,12,13,14,21,22,23,24,31,32,33,34),nrow=4,ncol=3))
+# la matrice è comunque un vettore
+str(matrice1)
+# dim restituisce la dimensione (righe, colonne)
+dim(matrice1)
+# la lunghezza del vettore sottostante (r*c)
+length(matrice1)
+# as.vector restituisce il vettore sottostante
+as.vector(matrice1)
+# t traspone la matrice: 
+# le righe diventano colonne, e viceversa
+t(matrice1)
+
+
+```
+
+
+Dim è l'attributo che permette ad un vettore di essere rappresentato come una matrice.
+
+con `str(matrice1)` possiamo vedere che la matrice è comunque un vettore di lunghezza `righe*colonne` e con attributo `dim`, che rappresenta la dimensione nella forma `righe, colonne`. Il vettore sottostante può essere *estratto* con la funzione `as.vector`.
+
+Attraverso le funzioni `colnames()` e `rownames()` posso assegnare o richiamare i nomi delle colonne e delle righe.
+
+
+```{r sd_colnames}
+# colnames assegna i nomi alle colonne
+colnames(matrice1) <- c("C_A", "C_B", "C_C")
+# rownames assegna i nomi alle righe
+rownames(matrice1) <- c("R1","R2","R3","R4")
+matrice1
+```
+
+
+## Fattori
+
+Un fattore è un vettore che rappresenta una variabile nominale (categoriale).
+Un fattore ordinato rappresenta una variabile ordinale.
+
+I fattori sono dunque utilizzati per rappresentare le variabili categoriali, in forma di stringhe di caratteri, che hanno un insieme fisso e noto di possibili valori.
+
+* [15 Factors | R for Data Science](https://r4ds.had.co.nz/factors.html)
+
+
+```{r sd_fattori}
+cat1 <- c("uno","due","uno","uno","due","uno","due")
+nominale <- factor(cat1)
+# levels implicitamente definisce l'ordine dei fattori
+ordinale <- factor(cat1,levels = c("uno","due"))
+# levels è un attributo del fattore
+attributes(nominale)
+# il tipo è integer
+typeof(nominale)
+as.integer(nominale)
+as.integer(ordinale)
+# per estrarre i livelli
+levels(ordinale)
+
+```
+
+Dietro le quinte R identifica (se non esplicitamente dichiarati) i *livelli* del vettore, ovvero i diversi valori. Se non esplicitamente dichiarati, i livelli sono ordinati alfabeticamente. Come possiamo vedere, un fattore è di tipo `integer` anche se è stato creato da un vettore di stringhe. Gli interi mappano l'indice del corrispondente livello.
+Con `as.integer(nominale)` possiamo vedere che la stringa "uno" è mappata con il numero 2, in quanto è il secondo valore dei livelli, e "due" con 1.
+
+Il vettore `ordinale` è stato creato definendo esplicitamente i livelli e, implicitamente, il loro ordine (prima "uno" e poi "due").
+`levels` è un vettore di caratteri, che può essere ottenuto con la funzione `levels`. Poiché `levels` è un attributo, `levels(ordinale)` è equivalente a `attr(ordinale,"levels")`.
+
+
+## Le liste
+
+Una lista è una collezione ordinata ed eterogenea di oggetti anche complessi. Poiché la lista può contenere altre liste, attraverso la lista si possono costruire delle strutture ad albero.
+Per creare una lista, si usa la funzione `list()`
+
+
+```{r sd_lista}
+lista1 <-list(
+	matrice=matrix(10:18,nrow=3),
+	saluto=rep("ciao",3),
+	colazione=c("cappuccio","brioche"))
+lista1
+str(lista1)
+
+```
+
+## Data frame
+
+Un data frame è una lista di vettori o fattori o matrici di uguale lunghezza (per le matrici conta il numero di righe). In quanto tale, può essere rappresentato come una matrice, dove i vettori corrispondono alle colonne. La differenza più importante fra data.frame e matrice è che mentre nella seconda tutti gli elementi sono dello stesso tipo, nel data.frame le colonne possono essere di tipo diverso.
+
+I data frame sono le strutture che rappresentano i dati nella forma `variabili*osservazioni`, dove le variabili sono le colonne e le osservazioni le righe.
+L'attributo `names` permette di attribuire una etichetta alle variabili.
+
+
+```{r sd_dataframe}
+nome <- c("luigi","mario","antonella","luca")
+anno <- c(1956,1945,1972, 1976)
+condizione <- c("exp","controllo","exp","controllo")
+soggetti <- data.frame (nome,anno,condizione)
+soggetti
+
+```
+
+## Riferimenti
+
+* [An Introduction to R](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Vectors-and-assignment)
+* [Basic Types - R Language Definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Basic-types)
+* [Vectors | R for Data Science](https://r4ds.had.co.nz/vectors.html)
+* [Quick-R: Data Types](https://www.statmethods.net/input/datatypes.html)
+* [Vectors - psyr.org](https://psyr.org/vectors.html)
+* [Vectors | R for Data Science](https://r4ds.had.co.nz/vectors.html)
+* [Data types - psyr.org](https://psyr.org/data-types.html)
+* [Dates - psyr.org](https://psyr.org/data-types.html#136_dates)
+* [R Nuts and Bolts - R Programming for Data Science](https://bookdown.org/rdpeng/rprogdatascience/r-nuts-and-bolts.html)
+

@@ -1,0 +1,212 @@
+---
+title: "Primi passi con R"
+author: "Stefano Bussolon"
+date: "10 ottobre 2018"
+output:
+  html_document:
+    keep_md: yes
+  pdf_document:
+    keep_tex: yes
+noknit: (function(inputFile, encoding) { out_dir <- '../../dest/dispensa/html'; rmarkdown::render(inputFile,
+  encoding=encoding, output_file=file.path(dirname(inputFile), out_dir, 'primi_passi.html'))
+  })
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Scaricare r
+
+R è un software free ed open source, che può essere liberamente scaricato dal sito [R: The R Project for Statistical Computing](https://www.r-project.org/), ad esempio utilizzando il mirror dell'università di Padova: [The Comprehensive R Archive Network](https://cran.stat.unipd.it/)
+
+R è disponibile per piattaforme Windows, Mac, Linux.
+
+R è un software a riga di comando. Questo significa che ogni istruzione viene comunicata ad R attraverso il prompt della riga di comando.
+
+
+### RStudio
+
+Per rendere più semplice la vita, è opportuno utilizzare [RStudio](https://www.rstudio.com/products/RStudio/), un IDE (integrated development environment) che rende più pratico scrivere codice in R. Anche RStudio può essere installato su Windows, Mac, Linux.
+
+[rdpeng - Getting started with R](https://bookdown.org/rdpeng/rprogdatascience/getting-started-with-r.html)
+
+[Installing R and RStudio - stat545](http://stat545.com/block000_r-rstudio-install.html)
+
+
+## Usare R come una calcolatrice
+
+Per iniziare a prendere confidenza con la riga di comando di R, è possibile cominciare a giocarci, provando le funzioni più elementari.
+La riga di comando, ad esempio, può essere utilizzata per calcolare alcune semplici operazioni.
+
+### Operazioni aritmetiche di base
+
+Addizione, sottrazione, moltiplicazione, divisione, elevazione a potenza
+
+```{r pp_operazioni}
+# addizione
+7+4
+# sottrazione
+13-5
+# moltiplicazione
+7*7
+# divisione
+23/3
+# divisione intera
+23 %/% 3
+# modulo (il resto della divisione)
+23 %% 3
+# elevazione a potenza
+2^3
+
+3^2 + (7-2)*3
+
+
+```
+
+
+
+## Assegnazione di variabili
+
+La creazione di una variabile avviene attraverso la sintassi `<-`.
+In R non è necessario definire il tipo di variabile. Attraverso l'assegnazione, sarà R a creare un tipo opportuno di variabile (o di oggetto).
+
+
+```{r pp_assegnazione}
+numero1 <- 5
+etichetta1 <- "Antonio"
+# le parentesi servono a stampare il risultato a video
+(numero2 <- 5.12)
+numero3 <- 10/3
+# invocando la variabile ne stampo il valore
+numero3
+# se alla stessa variabile assegno un nuovo valore
+# perdo il valore precedente
+numero3 <- 10*2
+numero3
+
+# operazioni usando le variabili
+variabile1 * variabile2
+
+# assign (variabile, valore) equivale a variabile <- valore
+assign("numero4", 7)
+numero4
+
+```
+`<-` è l'operatore di assegnamento, ed equivale alla funzione `assign`. Pertanto `numero <- 5` è una scorciatoia della funzione `assign("numero", 5)`.
+
+La funzione `ls()` mi permette di elencare tutte le variabili (oggetti) attualmente attivi nel framework.
+
+
+```{r pp_ls}
+
+ls()
+
+```
+
+
+La funzione `rm()` rimuove un oggetto. Ad esempio, con il comando `rm(variabile1)` l'oggetto variabile1 sarà cancellato, e non più disponibile.
+
+
+### Operazioni booleane
+
+Le operazioni booleane sono finalizzate a confrontare due elementi. L'output di queste operazioni è di tipo booleano.
+
+Attenzione: per valutare l'uguaglianza fra due elementi si usa ==
+
+```{r pp_booleane}
+quattro <- 4
+cinque <- 5
+# la variabile quattro è uguale a 4?
+quattro == 4
+cinque == 4
+# quattro è minore di cinque?
+quattro < cinque
+# quattro è minore o uguale a 4?
+quattro <= 4
+quattro < 4
+# quattro è diverso da cinque?
+quattro != cinque
+
+giusto = TRUE
+sbagliato = FALSE
+# TRUE or FALSE = TRUE 
+giusto | sbagliato
+# TRUE and FALSE = FALSE
+giusto & sbagliato
+# vero o falso = vero
+(5>4) | (4>5)
+# vero e falso = falso
+(5>4)&(4>5)
+(6<7)&(7<8)
+# ! significa not.
+!TRUE
+!FALSE
+!sbagliato
+sbagliato & (quattro==4)
+
+```
+
+### Riferimenti
+
+* [Quick-R: Operators](https://www.statmethods.net/management/operators.html)
+* [https://psyr.org/variables.html](https://psyr.org/variables.html)
+
+
+
+:todo: linee guida / guida di stile: [Style guide · Advanced R.](http://adv-r.had.co.nz/Style.html)
+
+## Guide di stile
+
+Nello scrivere del codice, è opportuno seguire delle guide di stile. Questo garantisce una maggiore consistenza e codice più elegante.
+
+Uno degli aspetti più importanti e meno banali è dare dei nomi appropriati alle variabili. Appropriati significa comprensibili ma non troppo lunghi.
+
+Per separare le parole in un nome composto, Hadley Wickham suggerisce di usare l'underscore `_`. Ad esempio `nome_variabile`. Personalmente, però, non disdegno di utilizzare a volte il camelCase: `nomeVariabile` (peraltro suggerito nelle linee guida di Google).
+
+Per approfondire, si consigliano queste risorse:
+
+* [The tidyverse style guide](https://style.tidyverse.org/index.html)
+* [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml)
+
+
+
+## Help
+
+Sebbene sia utile conoscere a memoria le funzioni più importanti, è assolutamente normale non ricordare tutte le funzioni, tutti i parametri.
+
+Dalla sezione documenti del sito di R si possono scaricare delle R Reference Card, ovvero delle raccolte, con breve spiegazioni, delle funzioni più importanti.
+Strumenti come gli [cheatsheets](https://www.rstudio.com/resources/cheatsheets/) di RStudio sono estremamente utili per avere un riferimento veloce di una serie di argomenti.
+
+Soprattutto, è opportuno imparare ad usare gli aiuti che l'ambiente R ci offre.
+
+
+* help(nome)
+	help sulla funzione `nome'
+* ?nome
+	equivale a help(nome)
+* apropos("nome")
+	elenca le funzioni che contengono ``nome''
+* example(funzione)
+	mostra degli esempi dell'uso della funzione
+* RSiteSearch("kmeans")
+	cerca informazioni relative alla funzione ``kmeans'' su internet.
+
+
+### Risorse
+
+* [The Very Basics | Hands-On Programming with R](https://rstudio-education.github.io/hopr/basics.html)
+* [Tutorials for learning R | R-bloggers](https://www.r-bloggers.com/how-to-learn-r-2/)
+* [R-intro.pdf](https://cran.r-project.org/doc/manuals/R-intro.pdf)
+* [https://psyr.org/getting-started.html](https://psyr.org/getting-started.html)
+* [Learning - Efficient R programming](https://csgillespie.github.io/efficientR/learning.html)
+
+
+## Lo spazio di lavoro
+
+:TODO:
+
+[Quick-R: The Workspace](https://www.statmethods.net/interface/workspace.html)
+
+
+
