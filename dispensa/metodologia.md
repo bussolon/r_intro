@@ -55,7 +55,7 @@ Uno dei due meccanismi finalizzato a mantenere l’atteggiamento critico è il m
 
 In secondo luogo, l’approccio falsificazionista sta alla base della statistica inferenziale. Come vedremo nei prossimi paragrafi e nel corso dell’intera dispensa, la statistica inferenziale è finalizzata a valutare quanto le misure ottenute siano attribuibili al caso. Nel confronto fra due (o più) variabili, ad esempio, si cerca di capire se fra le variabili vi è una relazione. Per fare questo, si identifica una statistica, ovvero una procedura di calcolo attraverso cui si ottiene un valore numerico. Il fine del processo inferenziale è stabilire se quel valore numerico va attribuito al caso (all’errore di campionamento) o alla relazione fra le variabili.
 
-Per fare questo, si formulano due ipotesi: l’ipotesi nulla ($ H_0$) assume che il valore numerico misurato sia attribuibile al caso, e che dunque, dall’analisi fatta, non si possa dedurre che vi sia una relazione. L’ipotesi alternativa ($ H_A$) assume invece che il valore numerico non sia attribuibile al caso, e dunque si possa inferire che la relazione esiste.
+Per fare questo, si formulano due ipotesi: l’ipotesi nulla ($H_0$) assume che il valore numerico misurato sia attribuibile al caso, e che dunque, dall’analisi fatta, non si possa dedurre che vi sia una relazione. L’ipotesi alternativa ($H_A$) assume invece che il valore numerico non sia attribuibile al caso, e dunque si possa inferire che la relazione esiste.
 
 Ebbene, il processo inferenziale si basa sul rifiuto (ovvero, sulla falsificazione) dell’ipotesi nulla. Se il valore numerico calcolato è superiore (o inferiore, a seconda dei casi) ad un valore critico, si rifiuta l’ipotesi nulla, ovvero si falsifica l’ipotesi che non vi sia relazione fra le variabili. In caso contrario, l’ipotesi nulla **non viene rifiutata**, ma si rifiuta l’ipotesi alternativa.
 
@@ -222,10 +222,9 @@ Le statistiche esplorative propriamente dette (Exploratory Data Analysis, EDA) h
 
 La statistica esplorativa può essere univariata o multivariata. Inoltre, può utilizzare metodi grafici e metodi non grafici. Spesso, in letteratura, si tende ad usare sia il termine descrittiva che esplorativa, anche se forse ha più senso parlare di statistica esplorativa quando valuta la relazione fra due o più variabili, e descrittiva la statistica non inferenziale univariata.
 
-Mentre l’analisi inferenziale segue la definizione dell’ipotesi di ricerca, l’analisi esplorativa spesso ha luogo prima della definizione del modello teorico e dell’ipotesi di ricerca. Semplificando, nell’analisi inferenziale, la sequenza teorica è problema $ \rightarrow $ definizione di un modello (ipotesi) $ \rightarrow $ raccolta dei dati $ \rightarrow $ analisi $ \rightarrow $ eventuali conclusioni
+Mentre l’analisi inferenziale segue la definizione dell’ipotesi di ricerca, l’analisi esplorativa spesso ha luogo prima della definizione del modello teorico e dell’ipotesi di ricerca. Semplificando, nell’analisi inferenziale, la sequenza teorica è problema $\rightarrow$ definizione di un modello (ipotesi) $\rightarrow$ raccolta dei dati $\rightarrow$ analisi $\rightarrow$ eventuali conclusioni
 
-Nell’analisi esplorativa, la sequenza è\
-problema $ \rightarrow $ raccolta dei dati $ \rightarrow $ analisi esplorativa $ \rightarrow $ definizione di un modello (ipotesi) $ \rightarrow $ eventuali conclusioni
+Nell’analisi esplorativa, la sequenza è problema $\rightarrow$ raccolta dei dati $\rightarrow$ analisi esplorativa $\rightarrow$ definizione di un modello (ipotesi) $\rightarrow$ eventuali conclusioni
 
 ### Statistica descrittiva univariata
 
@@ -370,7 +369,7 @@ La linea di regressione, inoltre, ci permette di visualizzare il modello di regr
 
 Attraverso il mosaic plot è possibile rappresentare graficamente la relazione fra due variabili di tipo categoriale, nominale o ordinale.
 
-Per rappresentare numericamente il rapporto fra due variabili categoriali si usa invece la tabella delle frequenze (assolute o relative). La tabella, di dimensioni $ r*c $, dove r è il numero di livelli di una variabile, c il numero di livelli dell’altra.
+Per rappresentare numericamente il rapporto fra due variabili categoriali si usa invece la tabella delle frequenze (assolute o relative). La tabella, di dimensioni $r*c$, dove r è il numero di livelli di una variabile, c il numero di livelli dell’altra.
 
 #### Variabile categoriale vs variabile numerica
 
@@ -508,12 +507,12 @@ Un intervallo di confidenza molto largo lascia intendere che le dimensioni del c
 
 Nel test di ipotesi, si identificano un’ipotesi nulla e un’ipotesi alternativa; si fanno delle misurazioni e si calcola una statistica; se la statistica cade all’interno della regione di accettazione (basata sulla distribuzione dell’errore campionario), l’ipotesi nulla non viene rifiutata. In caso contrario, l’ipotesi nulla viene rifiutata, e si accetta l’ipotesi alternativa. Il test di ipotesi si pone la questione: “i risultati che abbiamo ottenuto possono essere attribuiti al caso?” Il primo passo, è quello di tradurre il problema scientifico che ci siamo posti nei termini delle due ipotesi: l’ipotesi nulla e l’ipotesi alternativa.
 
--   L’ipotesi nulla, $ H_0 $, assume che il risultato non sia significativo, ovvero che sia da attribuire al caso.
--   L’ipotesi alternativa $ H_1 $ o $ H_A $, sostiene che il risultato della statistica non possa essere attribuito al caso, ma che sia da attribuire ad una relazione inerente la popolazione, sia questa una differenza o una relazione.
+-   L’ipotesi nulla, $H_0$, assume che il risultato non sia significativo, ovvero che sia da attribuire al caso.
+-   L’ipotesi alternativa $H_1$ o $H_A$, sostiene che il risultato della statistica non possa essere attribuito al caso, ma che sia da attribuire ad una relazione inerente la popolazione, sia questa una differenza o una relazione.
 
 Il secondo passo, è identificare una statistica che sia capace di misurare la differenza (o la relazione) all’interno del campione, ed applicarla ai dati raccolti.
 
-Il terzo passo è confrontare il valore della statistica con la **corrispondente distribuzione di errore**. Informalmente, possiamo dire che più il valore della statistica si colloca *ai margini* della distribuzione di errore, meno è probabile che la differenza (o la relazione) misurata siano attribuibili al caso. Questa probabilità può essere stimata in base alla distribuzione dell’errore, e costituisce il p-value, valore su cui si basa la decisione finale: se il p-value risulta inferiore ad un livello di soglia accettabile, definito $ \alpha $, si rifiuta l’ipotesi nulla, e si accetta l’ipotesi alternativa. In caso contrario, non si rifiuta l’ipotesi nulla.
+Il terzo passo è confrontare il valore della statistica con la **corrispondente distribuzione di errore**. Informalmente, possiamo dire che più il valore della statistica si colloca *ai margini* della distribuzione di errore, meno è probabile che la differenza (o la relazione) misurata siano attribuibili al caso. Questa probabilità può essere stimata in base alla distribuzione dell’errore, e costituisce il p-value, valore su cui si basa la decisione finale: se il p-value risulta inferiore ad un livello di soglia accettabile, definito $\alpha$, si rifiuta l’ipotesi nulla, e si accetta l’ipotesi alternativa. In caso contrario, non si rifiuta l’ipotesi nulla.
 
 #### L’ipotesi nulla
 
@@ -546,11 +545,11 @@ Coerentemente con l’atteggiamento falsificazionista, il p-value può essere us
 
 In ambito applicativo, non è detto che una significatività statistica abbia reali implicazioni pratiche. In clinica, ad esempio, una differenza statisticamente significativa può non essere clinicamente significativa. Inoltre, il p-value non dice nulla sull’entità della differenza (o dell’effetto)
 
-#### P-value e $ \alpha $
+#### P-value e $\alpha$
 
-La decisione sul rifiuto o meno dell’ipotesi nulla si basa sul confronto fra il p-value e la soglia $ \alpha $: se $ p <  \alpha $ si rifiuta l’ipotesi nulla, altrimenti no.
+La decisione sul rifiuto o meno dell’ipotesi nulla si basa sul confronto fra il p-value e la soglia $\alpha$: se $p <  \alpha$ si rifiuta l’ipotesi nulla, altrimenti no.
 
-$ \alpha $ è anche il livello di significatività del test. Generalmente, i valori più comunemente utilizzati sono $ \alpha $ = 0.05 e $ \alpha $ = 0.01.
+$\alpha$ è anche il livello di significatività del test. Generalmente, i valori più comunemente utilizzati sono $\alpha$ = 0.05 e $\alpha$ = 0.01.
 
 #### L’ipotesi alternativa
 
@@ -564,10 +563,10 @@ Possiamo dunque riassumere il processo decisionale del test d’ipotesi.
 -   Si parte, concettualmente, dall’ipotesi nulla;
 -   si definisce l’ipotesi alternativa – generalmente, l’ipotesi a supporto della teoria;
 -   si definisce e si calcola la statistica test opportuna sulla variabile, misurata sul campione;
--   si definisce l’errore di tipo I che si ritiene accettabile (ovvero, il valore $ \alpha $);
+-   si definisce l’errore di tipo I che si ritiene accettabile (ovvero, il valore $\alpha$);
 -   si calcola la *regione di rifiuto* dell’ipotesi nulla o, alternativamente, il p-value;
 -   la decisione finale si basa valutando se la misura della statistica cade all’interno o all’esterno della regione di accettazione dell’ipotesi; se all’esterno, si rifiuta l’ipotesi nulla, e si accetta l’ipotesi alternativa; se all’interno, non si rifiuta l’ipotesi nulla, ma quella alternativa;
--   lo stesso risultato può essere ottenuto confrontando il p-value con $ \alpha $: se $ p < \alpha $ si rifiuta l’ipotesi nulla, altrimenti no.
+-   lo stesso risultato può essere ottenuto confrontando il p-value con $\alpha$: se $p < \alpha$ si rifiuta l’ipotesi nulla, altrimenti no.
 
 ### Scegliere la statistica appropriata
 
