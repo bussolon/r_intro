@@ -26,13 +26,6 @@ Come è stato detto nel capitolo di introduzione metodologica, le statistiche de
 * identificare l’entità e la direzione delle relazioni fra le variabili;
 * selezionare i modelli statistici appropriati;
 
-Why do we use exploratory graphs in data analysis?
-* Understand data properties
-* Find patterns in data
-* Suggest modeling strategies
-* “Debug” analyses
-
-
 
 Sappiamo inoltre che si usano indicatori e strumenti diversi in base alla tipologia delle variabili (categoriali, ordinali, quantitative) ed in base al numero di variabili prese in considerazione (univariate, bivariate, multivariate).
 

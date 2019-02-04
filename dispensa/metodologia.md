@@ -14,6 +14,7 @@ image:
 
 ...
 
+# Aspetti metodologici
 
 ## La ricerca
 
@@ -593,8 +594,8 @@ La tipologia di statistica che può essere applicata si basa sulla tipologia del
 #### Statistiche bivariate
 
                              dipendente numerica         dipendente categoriale
-  -------------------------- --------------------------- ----------------------------------------------
-  indipendente numerica      correlazione, regressione   analisi discriminante, regressione logistica
+  -------------------------- --------------------------- ---------------------------------------
+  indipendente numerica      correlazione, regressione   analisi discriminante, regr. logistica
   indipendente categoriale   t-test, ANOVA               chi quadro
 
 ## Esercizi
