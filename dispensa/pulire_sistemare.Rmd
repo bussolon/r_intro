@@ -1,0 +1,155 @@
+---
+title: "Sistemare i dati"
+author: "Stefano Bussolon"
+date: "7 gennaio 2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Sistemare i dati
+
+L'analisi dei dati è un processo finalizzato ad esplorare, ripulire, trasformare ed analizzare un insieme di dati.
+
+Ripulire e sistematizzare i dati è il primo passaggio, necessario per poter procedere nelle analisi esplorative, descrittive, inferenziali.
+
+La *pulizia* dei dati consiste in primo luogo nell'analizzare i dati grezzi per verificare che la loro codifica sia corretta, ed identificare e correggere eventuali problemi di codifica.
+Questo passaggio trasforma i dati *grezzi* in dati *tecnicamente corretti*.
+
+In secondo luogo, questi dati vanno analizzati per verificare che la base di dati non contenga errori sostanziali. Questa *pulizia* trasforma i dati *tecnicamente corretti* in dati *consistenti*.
+
+[An introduction to data cleaning with R](https://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
+La *trasformazione* / *sistematizzazione* dei dati consiste nell'organizzarli in maniera da facilitare la successiva analisi statistica.
+
+Il passaggio successivo costituisce l'analisi vera e propria (descrittiva, esplorativa, inferenziale). Infine, i risultati dell'analisi vanno sintetizzati attraverso la creazione di report.
+
+
+Una volta caricato il file di dati, è opportuno in primo luogo controllarne la correttezza, attraverso un processo di *pulizia*.
+
+In secondo luogo, può essere necessario sistematizzare i dati se non sono rappresentati in forma canonica.
+
+## Pulizia dei dati
+
+I dati sono *tecnicamente corretti* se
+
+* sono caricati in un data frame, i cui nomi di colonne siano corretti e significativi
+* ogni colonna è del tipo corretto: i dati numerici in vettori `numeric`, i dati testuali in vettori `character`, e le variabili categoriali in `factor` con livelli appropriati.
+
+Spesso può essere utile pre-processare i dati grezzi con strumenti diversi da R, ad esempio con degli editor di testo.
+
+Lo svantaggio di ripulire i dati a mano è che un processo di questo tipo non è facilmente replicabile.
+
+ +++todo+++ conversione di tipo
+ 
+ Se le colonne contengono delle date, può essere necessario convertire il testo che rappresenta le date nei formati `POSIXlt` o `POSIXct`, ad esempio con la funzione `strptime`.
+
+## Verifica di consistenza
+
+Il passaggio successivo consiste nel verificare che i dati, che da grezzi sono stati trasformati in *tecnicamente corretti*, siano anche *consistenti*. Si tratta di verificare se ci sono degli errori o dei problemi a livello di contenuti, ovvero valutare se ci sono dei dati esplicitamente sbagliati, dei dati incompleti o compromessi, degli outlier fuori norma. Questi dati vanno corretti se possibile, oppure eliminati se necessario.
+
+La verifica di consistenza è un processo che prevede
+
+* la definizione di vincoli che definiscono quel tipo di variabile o osservazione
+* l'identificazione di dati che violano i vincoli
+* la correzione dei dati, o loro eliminazione
+
+Particolare attenzione va prestata ai missing (NA).
+
+In questo contesto gli outlier sono osservazioni o insiemi di osservazioni che appaiono inconsistenti con il set di dati. Gli outlier vanno analizzati, per valutare se vi sono motivi per considerarli delle violazioni dei vincoli o se - semplicemente - sono delle osservazioni che si collocano ai margini delle distribuzioni.
+
+Alcune inconsistenze appaiono più palesi. Ad esempio, l'età di una persona non può essere negativa.
+
+[An introduction to data cleaning with R](https://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
+
+
+## Un esempio
+
+Per spiegare la necessità di *pulire i dati*, può essere utile fare un esempio.
+
+[Global Footprint Network](https://www.footprintnetwork.org/about-us/) è una organizzazione no profit che si occupa di sostenibilità ambientale.
+Nel sito dell'organizzazione vi è una sezione open data, dove sono riportate delle statistiche relative all'*impronta ecologica* dei paesi del mondo. 
+La pagina [Sustainable Development](http://data.footprintnetwork.org/#/sustainableDevelopment?cn=all&type=BCpc,EFCpc&yr=2014) confronta tre indici relativi a 178 paesi:
+
+1. lo *Human Development Index (HDI)*, sviluppato dalle nazioni unite
+2. l'[impronta ecologica](https://it.wikipedia.org/wiki/Impronta_ecologica), definita in termini di area biologicamente produttiva di mare e di terra necessaria a rigenerare le risorse consumate da una popolazione umana (o - nel caso dei dati, pro-capite) e ad assorbire i rifiuti prodotti
+3. la popolazione di quel paese.
+
+Possiamo usare `read.csv()` per scaricare la tabella di dati
+
+```{r}
+sustain <- read.csv("https://s3.eu-central-1.amazonaws.com/bussolon/dati/Sustainable_Development.csv", header = TRUE, stringsAsFactors = FALSE)
+str (sustain)
+
+```
+
+Attraverso la funzione `str()` possiamo analizzare la struttura del data frame. 
+Due cose saltano all'occhio. La prima: `Country.Name` sembra uguale a `countryName` o, quantomeno, le due colonne appaiono ridondanti.
+La seconda, forse meno evidente, è che anche le colonne apparentemente numeriche (`EFConsPerCap` e `HDI`) vengono *viste* da r come testo (`chr`).
+
+Utilizzando la funzione `View(sustain)` è possibile visualizzare il data frame. Si scopre così che:
+
+a. le prime due colonne sono davvero uguali
+b. il nome di alcuni paesi si è spalmato sulle colonne adiacenti, sporcando i dati.
+
+Diventa dunque necessario quantomeno ripulire le righe in cui i nomi si sono spalmati nelle colonne adiacenti; in secondo luogo, è opportuno eliminare una delle prime due colonne.
+
+Per ripulire le righe, l'approccio più ovvio può essere quello di aprire il file con excel o libre office. Ma forse la soluzione più semplice è quella di aprire il file con un editor di testo.
+Se andiamo alla riga 70 vediamo che l'Iran è definito come `Iran, Islamic Republic of`.
+
+	Iran, Islamic Republic of,Iran, Islamic Republic of,3.4,0.77,78143640 
+
+Ma la virgola viene interpreatata come separatore di campo (comma separated).
+La cosa più semplice è cancellare le virgole di troppo.
+
+Una volta fatta questa prima correzione, è possibile ricaricare il file per verificare che il problema sia risolto.
+
+```{r}
+sustainable <- read.csv("/home/bussolon/documenti/didattica/r_dottorato/dati/Sustainable_Development_pulito.csv")
+str(sustainable)
+levels(sustainable$EFConsPerCap)
+
+```
+
+Il prossimo passaggio consiste nell'eliminare una delle due colonne.
+Il passaggio successivo consiste nel capire perché la colonna relativa all'impronta ecologica (`EFConsPerCap`) sia vista come fattore. Analizzando i *livelli* si scopre che i *missing* sono etichettati come `undefined`.
+
+```{r}
+
+sustainable$EFConsPerCap[sustainable$EFConsPerCap=="undefined"] <- NA
+sustainable$EFConsPerCap <- as.numeric(sustainable$EFConsPerCap)
+
+```
+
+È dunque necessario trasformare gli `undefined` in `NA`, e poi convertire il vettore da fattore a numerico, con la funzione `as.numeric()`.
+
+A questo punto il dataframe è tecnicamente corretto.
+
+## Risorse
+
+* Pulire i dati (scrub, wrangle) [data-wrangling-cheatsheet - data-wrangling-cheatsheet.pdf](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) - direi che fatto as old style, devi imparare (e scrivere) new style (tidyverse)
+	* la logica di R (righe=osservazioni, colonne = variabili)
+	* Pick observations by their values (filter()). [R for Data Science](http://r4ds.had.co.nz/transform.html) - [Exploratory Data Analysis with R](https://bookdown.org/rdpeng/exdata/managing-data-frames-with-the-dplyr-package.html)
+	* Reorder the rows (arrange()).
+	* Pick variables by their names (select()).
+	* Create new variables with functions of existing variables (mutate()).
+	* Collapse many values down to a single summary (summarise()).
+	[https://psyr.org/manipulating-data.html](https://psyr.org/manipulating-data.html)
+
+[Tidy Data](https://vita.had.co.nz/papers/tidy-data.pdf)
+ottima introduzione accademica
+[sfirke/janitor: simple tools for data cleaning in R](https://github.com/sfirke/janitor)
+da valutare
+[Cleaning Data In R - Learn With Our Online Course | DataCamp](https://www.datacamp.com/courses/cleaning-data-in-r)
+da valutare
+[r - Organized processes to clean data - Data Science Stack Exchange](https://datascience.stackexchange.com/questions/52/organized-processes-to-clean-data)
+bel thread su se
+[An introduction to data cleaning with R](https://cran.r-project.org/doc/contrib/de_Jonge+van_der_Loo-Introduction_to_data_cleaning_with_R.pdf)
+[RPubs - Cleaning Data in R](https://rpubs.com/williamsurles/291107)
+
+
+[12 Tidy data | R for Data Science](https://r4ds.had.co.nz/tidy-data.html)
+[data-wrangling-cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
