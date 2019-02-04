@@ -33,7 +33,7 @@ Il modo più semplice per ottenere un sottoinsieme di dati da un vettore è attr
 
 Nell'esempio precedente `5` è l'indice che viene usato per selezionare un elemento del vettore. In R non esistono scalari, e dunque `5` equivale a `c(5)`. 
 
-```{r}
+```{r filtri_vettore}
 
 vettore1 <- c(2,4,6,8,10,12,14,16,18,20)
 vettore1[5]           # seleziona il quinto elemento
@@ -47,7 +47,7 @@ Se l'indice è un vettore numerico, verranno estratti gli elementi corrispondent
 Se l'indice è un vettore booleano della stessa lunghezza del vettore da cui si fa l'estrazione, verranno estratti gli elementi che corrispondono al valore `TRUE` dell'indice.
 Se agli elementi vettore di partenza è stato associato un nome, l'indice può essere un vettore stringa contenente i nomi degli elementi da estrarre.
 
-```{r}
+```{r filtri_names}
 names(vettore1) <- c("due","quattro","sei","otto","dieci","dodici","quattordici","sedici","diciotto","venti")
 vettore1
 vettore1["dieci"]
@@ -59,7 +59,7 @@ vettore1[5]
 
 Cosa succede se il filtro booleano ha una lunghezza minore del vettore da filtrare?
 
-```{r}
+```{r filtri_riuso}
 vettore1[c(TRUE,TRUE,FALSE)]
 ```
 
@@ -68,10 +68,9 @@ Il vettore più corto viene *riciclato* - ovvero ripetuto tante volte da pareggi
 * [20 Vectors | R for Data Science](https://r4ds.had.co.nz/vectors.html#using-atomic-vectors)
 
 
-
 ### Estrazione da matrici
 
-```{r}
+```{r filtri_matrici}
 matrice1 <- matrix(c(11,12,13,14,21,22,23,24,31,32,33,34),nrow=4,ncol=3)
 colnames(matrice1) <- c("C_A", "C_B", "C_C")
 rownames(matrice1) <- c("R1","R2","R3","R4")
@@ -91,7 +90,7 @@ matrice1["R3","C_A"]
 L'estrazione di elementi di una matrice è una estensione a due dimensioni dell'estrazione di un vettore. La sintassi è `matrice[indice righe, indice colonne]`. Per estensione, l'estrazione di un array tridimensionale sarà `array [indice dimensione 1, indice dimensione 2, indice dimensione 3]`.
 L'indice vuoto estrae l'intero vettore di quella dimensione.
 
-```{r}
+```{r filtri_vuoto}
 # estrae tutti gli elementi del vettore
 vettore1[]
 # estrae tutte le righe della colonna 2
@@ -103,7 +102,7 @@ matrice1[,]
 
 ```
 
-```{r}
+```{r filtri_2d}
 (indici2d <- matrix(c(1,1,2,2,1,3,4,3),ncol = 2, byrow = TRUE))
 matrice1[indici2d]
 
@@ -114,7 +113,7 @@ indici2d è una matrice `r*2`. Ogni riga è una coppia di valori che corrisponde
 
 ### Estrazione da liste
 
-```{r}
+```{r filtri_liste}
 lista1 <- list(nomi=c("Marco","Alessia"), amici=c("Luigi","Francesco","Raffaella"), provincia=c("Brescia"))
 lista1$nomi
 # la sintassi [[]] estrae i valori dell'oggetto selezionato
@@ -125,9 +124,9 @@ lista1[2]
 
 
 
-### Estrazione di data frame
+### Estrazione da data frame
 
-```{r}
+```{r filtri_df}
 
 nome <- c("luigi","mario","antonella","luca")
 anno <- c(1956,1945,1972, 1976)
@@ -161,7 +160,7 @@ subset(soggetti,condizione=="controllo")
 Come abbiamo visto parlando di estrazione da vettori, gli indici possono essere dei vettori logici. I vettori logici possono essere creati attraverso l'applicazione di operatori logici ai vettori.
 
 
-```{r}
+```{r filtri_logico}
 
 vettore_logico1 <- vettore1 > 10
 vettore1[vettore_logico1]
@@ -170,11 +169,11 @@ vettore1[vettore_logico1]
 
 +++todo+++ approfondire
 
-# Usare la sintassi sql
+## Usare la sintassi sql
 
 [sqldf package | R Documentation](https://www.rdocumentation.org/packages/sqldf/versions/0.4-11)
 
-```{r}
+```{r filtri_sqldf}
 library(sqldf)
 # seleziona tutte le variabili (*) di soggetti dove la condizione è 'exp'
 risultato <- sqldf("select * from soggetti where condizione == 'exp'")
@@ -184,6 +183,23 @@ rm(risultato)
 sqldf("select nome from soggetti where anno>1970")
 ```
 
+## Which
+
+
+Dato un filtro booleano, la funzione `which()` ritorna l'indice di quei valori che corrispondono a TRUE
+
+```{r filtri_which}
+vettore1
+# quali valori sono uguali a 4
+which(vettore1==4)
+# l'indice dei valori superiori a 7
+which(vettore1>7)
+# quale cella ha il valore massimo?
+which(vettore1==max(vettore1))
+
+```
+
+
 
 ## Riferimenti
 
@@ -192,5 +208,6 @@ sqldf("select nome from soggetti where anno>1970")
 * [Subsetting - R Programming for Data Science](https://bookdown.org/rdpeng/rprogdatascience/subsetting-r-objects.html)
 * [Indexing - R Language Definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing)
 * [Subset Data in R with R Subset Examples - RProgramming.net](http://rprogramming.net/subset-data-in-r/)
+* [indexing - Is there an R function for finding the index of an element in a vector? - Stack Overflow](https://stackoverflow.com/questions/5577727/is-there-an-r-function-for-finding-the-index-of-an-element-in-a-vector)
 
 
