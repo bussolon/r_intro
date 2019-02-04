@@ -1,0 +1,455 @@
+---
+title: "Analisi Descrittiva"
+author: "Stefano Bussolon"
+date: "12 ottobre 2018"
+output:
+  html_document: default
+  md_document:
+    variant: markdown_github
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# L'analis descrittiva
+
+## Finalità
+
+Come è stato detto nel capitolo di introduzione metodologica, le statistiche descrittive sono finalizzate a:
+
+* avere una prima visione, qualitativa, delle variabili raccolte;
+* controllare la presenza di errori, ad esempio di data-entry;
+* far emergere outliers e anomalie;
+* valutare qualitativamente ipotesi e assunti, determinare qualitativamente le relazioni fra le variabili;
+* identificare l’entità e la direzione delle relazioni fra le variabili;
+* selezionare i modelli statistici appropriati;
+
+Why do we use exploratory graphs in data analysis?
+* Understand data properties
+* Find patterns in data
+* Suggest modeling strategies
+* “Debug” analyses
+
+
+
+Sappiamo inoltre che si usano indicatori e strumenti diversi in base alla tipologia delle variabili (categoriali, ordinali, quantitative) ed in base al numero di variabili prese in considerazione (univariate, bivariate, multivariate).
+
+Analizziamo ora le funzioni più comuni nell'analisi descrittiva.
+
+## Variabili categoriali
+
+### Tabelle di contingenza
+
+Le tabelle di contingenza permettono di rappresentare la distribuzione di frequenza di variabili categoriali e di fattori.  
+In R, si usa la funzione `table(variabile)` per la rappresentazione univariata, e `table(variabile1, variabile2)` per la rappresentazione bivariata.
+
+
+### Barplot
+
+Un metodo grafico per visualizzare la distribuzione di frequenza di una variabile categoriale o ordinale è il barplot, usando la forma `barplot(table(variabile))`.
+
+### La moda
+
+In R non esiste una funzione per calcolare la moda, ovvero la categoria (o il valore, in caso di variabili numeriche) con la frequenza più alta. Per calcolarla, si identifica il valore più alto della tabella delle frequenze.
+
+```{r desc_nominale_1}
+# creiamo una variabile nominale con 3 livelli
+nominale <- factor(sample (c("rosso","bianco","verde"), 100,replace = TRUE))
+# la tabella delle frequenze
+(frequenze<-table(nominale))
+# calcoliamo la moda
+moda<-which(frequenze == max(frequenze))
+names(frequenze)[moda]
+# il grafico a barre
+barplot(frequenze)
+```
+
+## Variabili ordinali
+
+Gli indici che si possono calcolare con le variabii ordinali sono, oltre al numero di livelli e la moda, anche il minimo, il massimo, la mediana, i quartili ed il range interquantile.
+
+Come abbiamo visto nel capitolo dedicato alle tipologie di dati, in R le variabili ordinali vanno rappresentate come fattori ordinati.
+
+La funzione `summary()` però, se applicata ad un fattore, non restituisce questi dati, perché non vede il fattore come variabile numerica. Per aggirare l'ostacolo, è necessario utilizzare il vettore numerico sottostante, attraverso la chiamata alla funzione `as.integer()`.
+
+```{r desc_ordinale_1}
+# creiamo una variabile ordinale con 5 livelli
+cat_ord <- c("A","B","C","D", "E")
+ordinale <- factor(sample (cat_ord, 100,replace = TRUE), levels = cat_ord, ordered = TRUE	)
+# summary su ordinale
+summary(ordinale)
+# calcolare i quartili sul vettore sottostante
+quantile(as.integer(ordinale))
+```
+
+## Variabili a intervalli
+
+Oltre a moda, mediana, minimo, massimo e quartili, per le variabili ad intervalli si calcolano la media e la varianza / deviazione standard.
+
+Dal punto di vista grafico, si usano le funzioni grafiche `boxplot`, e `hist` per rappresentare l'istogramma delle frequenze
+
+```{r}
+# generiamo una variabile numerica con distribuzione normale
+# media=10, ds=2
+intervalli <- rnorm(100, mean=10, sd=2)
+summary(intervalli)
+sd(intervalli)
+boxplot(intervalli)
+hist(intervalli)
+```
+
+## Due variabili categoriali
+
+Il rapporto fra due variabili categoriali (nominali o ordinali) può essere rappresentato attraverso la tabella di contingenza a due vie.
+Graficamente, il rapporto può essere rappresentato attraverso il grafico `mosaicplot`.
+
+```{r desc_contingenza}
+(contingenza <- table(nominale, ordinale))
+mosaicplot(contingenza)
+```
+
+## Una variabile categoriale, una numerica
+
+### By
+
+`by()` è una funzione della famiglia di `apply`. La logica di `by` è di separare le righe un data frame, una matrice o un vettore in base ad un fattore. Ad esempio, la funzione `by(intervalli,ordinale,mean)` divide la variabile `intervalli` in cinque gruppi, in base al fattore `ordinale`, e per ogni gruppo applica la media.
+
+```{r desc_by}
+by(intervalli,ordinale,mean)
+```
+
+### Boxplot
+
+Boxplot può essere usato per confrontare una variabile ad intervalli su una variabile categoriale (nominale o ordinale).
+
+```{r}
+boxplot(intervalli ~ ordinale)
+```
+
+## Due variabili numeriche
+
+In caso di due variabili numeriche, la rappresentazione grafica è il grafico di dispersione. Se dal grafico appare che vi sia una correlazione, può essere utile calcolare la regressione lineare, con la funzione `lm(y ~ x)` e disegnare la retta di regressione, con la funzione `abline()`.
+
+```{r}
+# creo una seconda variabile ad intervalli
+# che *correla* con la prima
+intervalli2 <- intervalli + rnorm(100, mean=2, sd=3)
+# calcolo la regressione lineare
+lineare <- lm(intervalli2 ~ intervalli)
+# il grafico di dispersione
+plot(intervalli,intervalli2)
+# disegno la retta di regressione
+abline(lineare)
+
+```
+
+
+
+```{r eval=FALSE, echo=FALSE}
+barplot(table(partecipanti$scol))
+mosaicplot(table(partecipanti$sex,partecipanti$scol))
+
+temp_df <- data.frame(partecipanti$sex,partecipanti$corrette)
+library("ggpubr")
+
+contingenza <- table(partecipanti$sex,partecipanti$scol)
+ggballoonplot(as.data.frame(contingenza))
+
+
+ggdensity(temp_df, x = "corrette",
+add = "mean", rug = TRUE,
+color = "sex", fill = "sex",
+palette = c("#00AFBB", "#E7B800"))
+
+					
+```
+
+## Summarytools
+
+è un pacchetto bla bla
+
+```{r desc_summarytools, comment=NA, prompt=FALSE, cache=FALSE, echo=TRUE, results='asis'}
+library(summarytools)
+#st_options(bootstrap.css = FALSE,     # Already part of the theme
+#           footnote = NA,                 
+#           subtitle.emphasis = FALSE)
+#knitr::opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=TRUE, results='asis')
+# freq(nominale, style = "rmarkdown")
+
+ctable(nominale, ordinale, style = "rmarkdown")
+
+```
+
+
+
+
+
+## Risorse
+
+* [Exploratory Data Analysis Using R – Datazar Blog](https://blog.datazar.com/exploratory-data-analysis-using-r-part-i-17e4e8e03961)
+* [The Personality Project's Guide to R](https://personality-project.org/r/#descriptive)
+* [Exploratory Data Analysis with R](https://bookdown.org/rdpeng/exdata/exploratory-graphs.html)
+* [visualising data - psyr.org](https://psyr.org/visualising-data.html)
+
+
+
+## Esercizio
+
+In questo esercizio caricheremo un file di dati, in formato tsv (valori separati da tab), puliremo il data.frame, e faremo alcune analisi descrittive sui dati.
+
+
+```{r desc_partecipanti_01}
+partecipanti <- read.delim("https://s3.eu-central-1.amazonaws.com/bussolon/dati/parole_nonparole.tsv")
+
+```
+
+Controllo
+
+* la dimensione della tabella (righe e colonne)
+* i nomi delle righe
+
+Ci si aspetta che le righe corrispondano alle osservazioni (in questo caso, i partecipanti), mentre le colonne sono le variabili.
+
+```{r desc_partecipanti_02}
+dim(partecipanti)
+names(partecipanti)
+str(partecipanti)
+```
+
+Se non altrimenti specificato, le funzioni `read.[table|csv|delim]` tendono a considerare le colonne stringa come fattori (`stringsAsFactors = TRUE`). Nel caso della variabile `sex` questo è corretto. Nel caso di `professione` è formalmente corretto, ma in pratica i dati sono talmente sporchi (perché raccolti via internet con una domanda a risposta aperta) che ci ritroviamo con `r length(levels(partecipanti$professione))` `livelli`.
+Nel caso della variabile `Data` la trasformazione in fattore è del tutto sbagliata.
+
+
+
+```{r}
+summary(partecipanti)
+```
+
+I dati erano stati raccolti su internet, attraverso una servlet java. Nel caso della variabile `sex`, i dati mancanti erano stati contrassegnati con la stringa `null`. Pertanto, è necessario trasformare i `sex == null` in `NA`.
+
+```{r}
+partecipanti$sex[partecipanti$sex=='null'] <- NA
+levels(partecipanti$sex)
+## per togliere il livello "null", che ora è vuoto
+## [r - Drop factor levels in a subsetted data frame - Stack Overflow](https://stackoverflow.com/questions/1195826/drop-factor-levels-in-a-subsetted-data-frame)
+
+partecipanti$sex <- factor(partecipanti$sex)
+levels(partecipanti$sex)
+# in alternativa https://stackoverflow.com/a/17218028/1042167
+# y <- droplevels(y)
+```
+
+Nonostante la trasformazione dei `null` in `NA`, il fattore mantiene il livello `null`, anche se con 0 elementi.
+Per pulire i livelli, è necessario ri-applicare la funzione `factor()` alla colonna da pulire.
+
+
+## Scolarità
+
+La scolarità dei partecipanti era stata codificata con un numero che corrispondeva agli anni:
+
+* 5: elementari
+* 8: scuole dell'obbligo
+* 13: diploma
+* 16: laurea triennale
+* 18: laurea magistrale
+
+Questa variabile, però, non è propriamente numerica, e può costituire un fattore su cui fare alcune analisi.
+Più in particolare può essere interessante capire se vi è un rapporto fra scolarità e numero di risposte corrette.
+
+### Trasformare in fattore
+
+Per poter fare questo tipo di analisi, è opportuno trasformare questa variabile da numerica (int) ad un fattore. La funzione per operare questa trasformazione è `as.factor()`.
+
+```{r}
+partecipanti$scol <- as.factor(partecipanti$scol)
+levels(partecipanti$scol)
+levels(partecipanti$scol) <- c("elementari", "medie","diploma","triennale","magistrale")
+
+as.integer(partecipanti$scol)[1:20] # i primi 20 elementi
+```
+
+
+## Le date
+
+Attraverso la funzione `strptime(stringa, formato)` possiamo fare il parsing della colonna data, rendendo esplicito il formato da utilizzare, ed otterremo un vettore di date.
+
+```{r as_date}
+
+partecipanti$Data <- strptime(partecipanti$Data, format = "%Y/%m/%d %H:%M:%S")
+summary(partecipanti$Data)
+
+```
+
+```{r professione}
+
+partecipanti$professione[partecipanti$professione=="XX"] <- NA
+str(partecipanti$professione)
+partecipanti$professione <- as.factor(tolower(partecipanti$professione))
+
+```
+
+Nella colonna `professione`, i dati mancanti erano contrassegnati con i caratteri `XX`. Attraverso il filtro, abbiamo trasformato `XX` in `NA`.
+
+Essendo questo un campo a testo libero, alcune persone scrivevano tutto minuscolo, altre maiuscolo. Per semplificare le cose, abbiao trasformato i valori in minuscolo, con la funzione `tolower()`.
+
+### Boxplot
+
+Una modalità efficace per valutare visivamente se ci sono delle differenze fra diversi gruppi è utilizzando i grafici [Box plot](https://en.wikipedia.org/wiki/Box_plot).
+
+Ad esempio, potremmo chiederci se vi è una relazione fra scolarità e numero di risposte corrette.
+
+```{r}
+boxplot(partecipanti$corrette ~ partecipanti$scol)
+
+```
+
+
+Il grafico boxplot permette di visualizzare la mediana e la distanza interquartilica (ovvero fra il primo ed il terzo quartile). Permette inoltre di stimare la varianza (attraverso i *baffi*) e gli eventuali *outlier*, ovvero delle osservazioni che si discostano in maniera evidente dalla distribuzione.
+Dal grafico si può osservare che vi sono numerosi dati anomali. Nel test i partecipanti dovevano fare un numero di scelte vero o falso su 50 item. Chi rispondeva a caso aveva il 50% di probabilità di rispondere correttamente. Tutti i punteggi inferiori a 20 risultano dunque *sospetti*.
+L'ipotesi più plausibile è che quei punteggi rappresentino dei soggetti che avevano fatto molte omissioni (ovvero risposto soltanto ad alcuni dei 50 item).
+
+Per valutare questa ipotesi, possiamo verificare la colonna *risposte*.
+```{r}
+hist(partecipanti$risposte)
+```
+L'istogramma della variabile `risposte` lascia intendere che sebbene la maggior parte dei partecipanti abbia risposto ad almeno 40 delle 50 domande, alcuni hanno fatto un numero di omissioni più alto. Per avere una misura dei partecipanti che hanno risposto a meno di 40 domande, possiamo usare un filtro (`partecipanti$risposte>40`) e la funzione `table()`
+
+```{r}
+table(partecipanti$risposte>=40)
+```
+
+Su `r dim(partecipanti)[1]` partecipanti, `r table(partecipanti$risposte>40)[1]` hanno risposto a meno di 40 domande.
+
+
+```{r}
+plot(partecipanti$risposte, partecipanti$corrette, col = as.factor(partecipanti$risposte<40))
+```
+
+Il grafico conferma la nostra ipotesi: i punteggi più bassi corrispondono a quei partecipanti che hanno risposto a meno domande.
+
+Attraverso il parametro `col = as.factor(partecipanti$risposte<40)` abbiamo colorato i punti del plot in base alla soglia delle 40 risposte.
+
+
+## Filtrare i partecipanti
+
+A questo punto, possiamo decidere di considerare validi solo i partecipanti che hanno risposto ad almeno 40 domande.
+
+```{r}
+partecipanti_validi <- partecipanti[partecipanti$risposte>=40,]
+dim(partecipanti_validi)
+```
+
+Il nuovo data frame ha ancora `r dim(partecipanti_validi)[2]` colonne, e `r dim(partecipanti_validi)[1]` righe.
+
+Per verificare la distribuzione di risposte date e risposte corrette, possiamo fare il plot sul nuovo data frame.
+
+```{r}
+plot(partecipanti_validi$risposte, partecipanti_validi$corrette)
+```
+
+Come prevedibile, nel nuovo data frame il numero minimo di risposte corrette è `r min(partecipanti_validi$corrette)`.
+
+Creiamo il boxplot corrette ~ scol sul nuovo data frame.
+
+```{r}
+boxplot(partecipanti_validi$corrette ~ partecipanti_validi$scol)
+```
+
+## Attach
+
+Per evitare di ripetere ogni volta il nome del data frame, possiamo utilizzare la funzione `attach ()`, che ci permette di richiamare direttamente i nomi delle variabili del data frame. 
+
+```{r}
+## summary(scol) ---> Error in summary(scol) : oggetto "scol" non trovato
+attach(partecipanti_validi)
+summary(scol)
+```
+
+## Analisi delle variabili nominali
+
+Possiamo calcolare la frequenza attraverso la funzione table().
+
+```{r}
+(freq_sex <- table (sex))
+freq_sex / sum(freq_sex) # frequenza
+prop.table(freq_sex)     # = freq_sex / sum(freq_sex)
+```
+
+### Grafici su variabili nominali
+
+
+La funzione barplot mi permette di fare un grafico a barre.
+
+```{r}
+barplot (freq_sex)
+```
+
+
+pie è una funzione che permette di generare dei grafici a torta. Qualsiasi guida di data visualization considera i grafici a torta come una pessima modalità di visualizzazione. Dunque il consiglio è: usateli con molta, molta parsimonia. 
+Nel caso di un fattore con due livelli, come in questo caso, il grafico a torta può dare un'idea visiva della frequenza nei due generi. È comunque sconsigliabile utilizzarlo in una pubblicazione accademica.
+
+```{r}
+pie(freq_sex)
+```
+
+
+### Calcolo della moda
+
+```{r}
+t_sex<-tabulate(sex)
+(mode_sex<-which(t_sex == max(t_sex)))
+sex[mode_sex]
+t_sex[mode_sex]
+```
+
+:todo: tabulate
+
+### Scolarità
+
+```{r}
+freq_scol <- table (scol)
+freq_scol
+prop.table(freq_scol)
+barplot (freq_scol)
+```
+
+### Calcolo della moda
+
+```{r}
+t_scol<-tabulate(scol)
+mode_scol<-which(t_scol == max(t_scol))
+mode_scol
+scol[mode_scol]
+t_scol[mode_scol]
+```
+
+
++++todo+++ distribuzione delle risposte corrette
+
+## Distribuzione delle risposte corrette
+
+attraverso `hist()` possiamo visualizzare la distribuzione di variabili a intervalli o a rapporti.
+Usiamola per visualizzare la distribuzione di risposte corrette.
+
+```{r descr_hist_corrette}
+hist(partecipanti_validi$corrette)
+```
+
+Una alternativa, per le variabili numeriche, è utilizzare la funzione `plot(density())`.
+
+```{r}
+plot(density(partecipanti_validi$corrette))
+```
+
+`fivenum()` è la versione sintetica di `summary()`.
+
+```{r}
+fivenum(partecipanti_validi$corrette)
+summary(partecipanti_validi$corrette)
+```
+
+
+
+
