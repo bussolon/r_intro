@@ -1,0 +1,302 @@
+---
+title: "Le funzioni"
+author: "Stefano Bussolon"
+date: "3 gennaio 2019"
+description: ""
+output: html_document
+
+knit: (function(inputFile, encoding) { 
+      out_dir <- '../../dest/dispensa/html';
+      rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file=file.path(dirname(inputFile), out_dir,
+                        'funzioni.html')) })
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Funzioni
+
+R mette a disposizione numerose funzioni. Inoltre, è possibile scaricare, installare e richiamare delle librerie esterne, che mettono a disposizione altri insiemi di funzioni.
+
+Per iniziare a *giocare* con R, introduciamo le funzioni length, min, max, sum, mean.
+
+`length(v)` serve per conoscere la lunghezza (il numero di elementi) del vettore `v`.
+`min(v)` ritorna il valore più basso di un vettore `v`, `max()` il più alto.
+`sum(v)` somma i valori del vettore. `prod(v)` calcola il prodotto dei valori.
+`mean(v)` calcola la media, `sd(v)` la deviazione standard
+
+
+```{r}
+variabile1 <- c(2,3,6,4,8,4,1)
+length(variabile1)
+min(variabile1)
+max(variabile1)
+
+# somma tutti i valori
+sum(variabile1)
+# moltiplica tutti i valori
+prod(variabile1)
+# mean calcola la media
+mean(variabile1)
+# sd calcola la deviazione standard
+sd(variabile1)
+
+```
+
+
+### Generare delle sequenze
+
+La funzione [seq](https://stat.ethz.ch/R-manual/R-devel/library/base/html/seq.html) genera delle sequenze. La sintassi più semplice, `seq(from,to)` crea una sequenza dal primo valore all'ultimo con *step* 1. Il comando `c(from:to)` è del tutto equivalente, ed utilizza il cosiddetto [Colon Operator](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Colon.html).
+
+`seq(0,1000, length=11)` genera una sequenza di 11 numeri da 0 a 1000: 0, 100, 200 ... 1000.
+
+```{r funz_seq}
+(vettore1 <- seq(1,10))
+# seq (n) è uguale a seq(1,n)
+seq(10)
+# c(a:b) == seq(a,b)
+c(1:10)
+# genera una sequenza di lunghezza length
+seq(0,1000, length=11)
+```
+
+### Ripetizione
+
+La funzione `rep(v,n)` ripete un vettore `n` volte.
+
+```{r funz_rep}
+# ripete 2 10 volte
+rep(2,times=10)
+rep(c(2,4),times=10)
+# crea un vettore di lunghezza 10
+rep(c(2,4),length=10)
+
+# concateno due sequenze
+sequenze1 <- c(seq(0,1000, length=11),seq(1000,0, length=11))
+sequenze1
+
+```
+
+`rep(c(2,4,3),times=10)` ripete 10 volte i valori 2, 4 e 3, creando un vettore di 30 elementi. `rep(c(2,4),length=10)` crea un vettore di lunghezza 10 (dunque.
+`rep_len(x, n)` equivale a `rep(x,length=n)`
+
+* [R: Replicate Elements of Vectors and Lists](https://stat.ethz.ch/R-manual/R-devel/library/base/html/rep.html)
+
+
+### sample
+
+La funzione `sample(v)` *mescola* l'ordine del vettore `v`.
+La funzione `sample(v,n)` estrae `n` valori, in ordine casuale, dal vettore `v`.
+`sample` *estrae* casualmente i valori dal vettore - la metafora è quella di un'urna da cui vengono estratti i *numeri*. Se `replace=FALSE` un valore estratto non viene re-immesso nell'urna. Con `replace=TRUE` viene re-immesso, e può essere estratto di nuovo.
+
+
+```{r}
+# mescola il vettore
+(mischiato <- sample (vettore1))
+# sample (v,n) fa il sample e restituisce i primi n numeri
+sample(vettore1, 4)
+# se lo rifaccio, avrò numeri differenti
+sample(vettore1, 4)
+# con replace = TRUE i valori estratti vengono rimessi nell'urna
+sample(1:4,10,replace = TRUE)
+
+```
+
+
+### Ordinare un vettore
+
+```{r}
+# ordina un vettore
+# decreasing = TRUE ordine decrescente
+sort(mischiato)
+
+order(mischiato)
+mischiato[order(mischiato)]
+```
+
+`sort(mischiato)` ordina il vettore, dal valore minore al maggiore. `sort(mischiato,decreasing=TRUE)` per l'ordine inverso.
+
+`order(mischiato)` ritorna la permutazione necessaria per ordinare mischiato
+
+### Rev
+
+`rev(v)` *rovescia* l'ordine degli elementi del vettore.
+
+```{r}
+# rev(x) gira x
+rev(vettore1)
+```
+
+
+## cbind, rbind
+
+`cbind` e `rbind` creano delle matrici legando vettori o matrici in colonne (cbind) o in righe (rbind).
+
+```{r funz_cbind}
+# rbind prende gli argomenti e li mette una riga dopo l'altra
+rbind(c(1,2),c(3,4),c(5,6))
+
+# incolonna gli argomenti
+cbind(c(1,2),c(3,4),c(5,6))
+
+
+```
+
+### all, any
+
+`all(l)` e `any(l)` possono essere interpretate come delle estensioni degli operatori logici `&` e `|` (and e or).
+
+`all(v)` restituisce `TRUE` solo se *tutti* i valori del vettore logico *v* sono veri.
+`any(v)` restituisce `TRUE` se *almeno uno* dei valori del vettore logico *v* sono veri.
+
+
+```{r}
+# l'operatore logico & equivale alla funzione all (con 2 argomenti)
+TRUE & FALSE
+all(TRUE,FALSE)
+# l'operatore logico | equivale alla funzione any (con 2 argomenti)
+TRUE | FALSE
+any(TRUE,FALSE)
+```
+
+
+```{r funz_all}
+
+(logico1 <- mischiato>5)
+all(logico1)
+any(logico1)
+
+```
+
+## Operazioni su insiemi
+
++++todo+++ spiegare meglio
+
+```{r}
+(vettore2 <- c(seq(6,15),rep(8,3)))
+# intersect (v1, v2) restituisce i valori in comune
+intersect(mischiato, vettore2)
+# tutti i valori che appaiono almeno una volta nell'unione dei due vettori
+union(mischiato, vettore2)
+# setdiff(v1,v2): i valori di v1 NON presenti in v2
+setdiff(mischiato, vettore2)
+# restituisce TRUE se i due vettori hanno gli stessi elementi
+setequal(mischiato, vettore2)
+setequal(mischiato, vettore1)
+# perché?
+setequal(mischiato, c(vettore1, 5,6,7,2))
+
+```
+
+# Aritmetica delle matrici
+
+R permette sofisticate operazioni di aritmetica dei vettori e delle matrici. Riportiamo gli esempi più semplici.
+
+
+
+```{r}
+vettore1 <- c(1:9)
+vettore1*2
+```
+
+Apparentemente, `vettore1*2` moltiplica vettore1 per lo scalare 2. In realtà, `2` non è uno scalare, ma un vettore di lunghezza 1, che viene *riciclato* per la lunghezza di `vettore1`. La logica diviene evidente se moltiplichiamo `vettore1` per un vettore di lunghezza 3.
+
+```{r}
+vettore2 <- c(1,2,3) 
+vettore1*vettore2
+```
+
+Come si può vedere, `vettore2` è stato riusato 3 volte per moltiplicare `vettore1`.
+
+Questa operazione viene definita *element-wise multiplication*, e si distingue dalla moltiplicazione di matrici, che si ottiene con la sintassi `A %*% B`, ma che qui non verrà trattata. 
+
+Vediamo alcuni esempi con le matrici
+
+```{r}
+
+matrice1 <- matrix (c(5,7,1,6,9,5,2,1,9,5,7,5), nrow =3, ncol=4)
+matrice1
+
+matrice1 * 3
+
+# rep (10,12) ripete il numero 10 per 12 volte
+matrice2 <- matrix (rep(10,12),nrow=3, ncol=4)
+matrice2
+
+# sommo ogni elemento di matrice1 al
+# corrispondente di matrice2
+matrice1+matrice2
+# sottraggo, elmento per elemento
+matrice1-matrice2
+# divido
+matrice1/matrice2
+
+matrice3 <- matrix(c(2,3,4,3,2,6,7,8,5,9,5,6),nrow=4,ncol=3, byrow=TRUE)
+matrice3
+# traspongo matrice2 e la sommo a matrice3
+t(matrice2)+matrice3
+```
+
+
+
+* [Elementary arithmetic operations -R Language Definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Elementary-arithmetic-operations)
+* [Quick-R: Matrix Algebra](https://www.statmethods.net/advstats/matrix.html)
+
+
+
+# Programmazione funzionale
+
+[Functional programming · Advanced R.](http://adv-r.had.co.nz/Functional-programming.html#functional-programming)
+
+
+## le funzioni *apply
+
+
+Data una matrice, la funzione `apply(matrice,margine,funzione)` applica la funzione ad ogni cella delle righe o delle colonne della matrice.
+
+```{r}
+
+matrice1 <- matrix(sample(1:10,20,replace = TRUE),nrow = 5, ncol = 4)
+matrice1
+# calcola la somma dei valori di ogni riga
+apply(matrice1, 1, sum)
+# calcola la media di ogni colonna
+apply(matrice1, 2, mean)
+
+```
+
+`sapply(lista,funzione)` applica la funzione agli elementi della lista
+
+```{r func_sapply}
+lista1 <- list(a = 1:10, b = 11:20)
+lista1
+sapply(lista1, mean)
+
+```
+
+```{r}
+replicate(3, c(1:5))
+```
+
+
+## Riferimenti
+
+* [Vocab · Advanced R.](http://adv-r.had.co.nz/Vocabulary.html)
+* [adv-r-book-solutions/functions.r at master · peterhurford/adv-r-book-solutions](https://github.com/peterhurford/adv-r-book-solutions/blob/master/03_vocab/functions.r)
+* [R useful functions](http://www.sr.bham.ac.uk/~ajrs/R/r-function_list.html)
+* [Useful R base functions - Teaching - RStudio Community](https://community.rstudio.com/t/useful-r-base-functions/4542)
+* [r - Grouping functions (tapply, by, aggregate) and the *apply family - Stack Overflow](https://stackoverflow.com/questions/3505701/grouping-functions-tapply-by-aggregate-and-the-apply-family)
+* [Using aggregate and apply in R - Dave Tang's blog](https://davetang.org/muse/2013/05/22/using-aggregate-and-apply-in-r/)
+* [A brief introduction to “apply” in R | What You're Doing Is Rather Desperate](https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/)
+* [R Apply Family](http://people.stern.nyu.edu/ylin/r_apply_family.html)
+* [How to Aggregate Data in R | R-bloggers](https://www.r-bloggers.com/how-to-aggregate-data-in-r/)
+* [r - How to sum a variable by group? - Stack Overflow](https://stackoverflow.com/questions/1660124/how-to-sum-a-variable-by-group)
+
+
+
+
