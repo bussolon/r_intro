@@ -16,7 +16,9 @@ noknit: (function(inputFile, encoding) { out_dir <- '../../dest/dispensa/html'; 
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Scaricare r
+# Primi passi con R
+
+## Scaricare R
 
 R è un software free ed open source, che può essere liberamente scaricato dal sito [R: The R Project for Statistical Computing](https://www.r-project.org/), ad esempio utilizzando il mirror dell'università di Padova: [The Comprehensive R Archive Network](https://cran.stat.unipd.it/)
 
@@ -193,7 +195,8 @@ Soprattutto, è opportuno imparare ad usare gli aiuti che l'ambiente R ci offre.
 	cerca informazioni relative alla funzione ``kmeans'' su internet.
 
 
-### Risorse
+
+## Risorse
 
 * [The Very Basics | Hands-On Programming with R](https://rstudio-education.github.io/hopr/basics.html)
 * [Tutorials for learning R | R-bloggers](https://www.r-bloggers.com/how-to-learn-r-2/)
@@ -201,12 +204,19 @@ Soprattutto, è opportuno imparare ad usare gli aiuti che l'ambiente R ci offre.
 * [https://psyr.org/getting-started.html](https://psyr.org/getting-started.html)
 * [Learning - Efficient R programming](https://csgillespie.github.io/efficientR/learning.html)
 
++++todo+++ da completare
 
 ## Lo spazio di lavoro
 
-:TODO:
+Quando creiamo una variabile, o una funzione, tecnicamente *dove* la creiamo? Tecnicamente, nello *spazio di lavoro* (workspace).
 
 [Quick-R: The Workspace](https://www.statmethods.net/interface/workspace.html)
+[Working in the Console – RStudio Support](https://support.rstudio.com/hc/en-us/articles/200404846-Working-in-the-Console)
+[Using Projects – RStudio Support](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)
+[R basics, workspace and working directory, RStudio projects](https://stat545.com/block002_hello-r-workspace-wd-project.html)
+[Quick-R: The Workspace](https://www.statmethods.net/interface/workspace.html)
 
+### RStudio IDE
 
+[PowerPoint Presentation](https://dss.princeton.edu/training/RStudio101.pdf)
 
