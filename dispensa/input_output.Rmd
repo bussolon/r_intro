@@ -1,0 +1,131 @@
+---
+title: "Input output"
+author: "Stefano Bussolon"
+date: "5 gennaio 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Caricare e salvare file di dati
+
+## Leggere file di dati
+
+La funzione più utilizzata per leggere dei file di dati testuali è `read.table()`. Se la prima riga del file corrisponde ai nomi delle colonne, va usato il parametro `header = TRUE`. `sep` è il parametro che stabilisce il separatore di colonna.
+`read.csv()` è una variante di `read.table()`, dove il separatore è la virgola (`sep=","`), e serve per leggere i file `csv` (comma separated values). `read.delim()` si aspetta dei file `tsv` (tab separated values).
+`read.table()`, se non altrimenti specificato, trasforma le colonne stringa come fattori. Non è però detto che questo sia opportuno. Per evitarlo, va specificato il parametro `stringsAsFactors=FALSE`.
+
+
+```{r io_read, eval=FALSE}
+tabella1 <- read.table("tabella.tsv", header=TRUE, sep="\t")
+tabella1 <- read.delim("tabella.tsv", header=TRUE) # identico alla precedente
+tabella2 <- read.table("tabella.csv", header=TRUE, sep=",")
+tabella2 <- read.csv("tabella.csv", header=TRUE)   # identico alla precedente
+```
+
+
+### Leggere file in excel
+
+```{r io_excel, eval=FALSE}
+
+library(readxl)
+read_excel("tabella.xlsx")
+
+
+```
+
+### Rio
+
+Rio è un pacchetto che permette di importare ed esportare in numerosi formati di dati.
+
+[leeper/rio: A Swiss-Army Knife for Data I/O](https://github.com/leeper/rio)
+
+```{r io_rio, eval=FALSE}
+# install.packages("rio")
+library(rio)
+install_formats()
+ess_table <- import("/home/bussolon/programmi/r/datasets/europeansocialsurvey/ESS8e02.sav")
+
+```
+
+
+## Leggere da un database
+
+### Sqlite
+
+[Getting-started](https://db.rstudio.com/getting-started/)
+
+[r-dbi/RSQLite: R interface for SQLite](https://github.com/r-dbi/RSQLite)
+
+```{r io_sqlite, eval=FALSE}
+## install.packages("RSQLite")
+library("RSQLite")
+con <- dbConnect(RSQLite::SQLite(), "database.db")
+# legge le tabelle del db
+dbListTables(con)
+# legge i campi di una tabella
+dbListFields(con, "prova")
+# crea un data frame dalla tabella "prova"
+sqlite_tabella <- dbReadTable(con, "prova")
+
+dbClearResult(res)
+res <- dbSendQuery(con, "SELECT * FROM prova WHERE condizione == 'sperimentale'")
+query_tabella <- dbFetch(res)
+
+```
+
+### Fogli di lavoro google (googlesheets)
+
+```{r io_google, eval=FALSE}
+# installo il pacchetto
+# install.packages("googlesheets")
+# richiamo la libreria
+library(googlesheets)
+# autorizzo la libreria ad accedere al mio google
+gs_auth(new_user = TRUE)
+# elenco i miei documenti
+gdocs <- gs_ls()
+# carico il documento "prova_R"
+fogli_prova_R <- gs_title("prova_R")
+# carico il foglio "Foglio1"
+foglio_1 <- gs_read(ss=fogli_prova_R, ws = "Foglio1") #, skip=1)
+
+
+
+```
+
+
+## Salvare i dati
+
+### Salvare dati testuali
+
+```{r io_write, eval=FALSE}
+
+write.csv (data_frame, file="tabella1.csv")
+write.table(data_frame, "tabella2.tsv", sep="\t", row.names=FALSE, col.names=FALSE) 
+```
+
+### Salvare e caricare oggetti R
+
+```{r io_rds, eval=FALSE}
+
+saveRDS(data_frame, "binario.rds")
+
+data_frame <- readRDS("binario.rds")
+
+```
+
+
+## Risorse
+
+* [Getting data in and out - R Programming for Data Science](https://bookdown.org/rdpeng/rprogdatascience/getting-data-in-and-out-of-r.html)
+* [R Data Import/Export](https://cran.r-project.org/doc/manuals/r-release/R-data.html#Spreadsheet_002dlike-data)
+* [RPubs - Importing Data Into R Part 1](https://rpubs.com/williamsurles/290389)
+* [Importing Data with RStudio – RStudio Support](https://support.rstudio.com/hc/en-us/articles/218611977-Importing-Data-with-RStudio)
+* [R Tutorial on Reading and Importing Excel Files into R | R-bloggers](https://www.r-bloggers.com/r-tutorial-on-reading-and-importing-excel-files-into-r/)
+* [D Loading and Saving Data in R | Hands-On Programming with R](https://rstudio-education.github.io/hopr/dataio.html)
+* [Input / Output - Efficient R programming](https://csgillespie.github.io/efficientR/input-output.html#download)
+* [Writing data to a file](http://www.cookbook-r.com/Data_input_and_output/Writing_data_to_a_file/)
+
